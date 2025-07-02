@@ -51,7 +51,7 @@ ggkegg <- function(g, id = hgnc_symbol) {
     ) +
 
     # Edge subtype colors
-    ggplot2::scale_edge_colour_manual(
+    ggraph::scale_edge_colour_manual(
       values = c(
         "activation"          = "forestgreen",
         "inhibition"          = "red3",
