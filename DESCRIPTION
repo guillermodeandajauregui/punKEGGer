@@ -2,13 +2,13 @@ Package: punKEGGer
 Title: Parse, Expand and Visualize KEGG Pathway Networks
 Version: 0.0.0.9000
 Authors@R: 
-    person("Guillermo", "de Anda Jáuregui", , "gdeanda@inmegen.edu.mx", role = c("aut", "cre"))
+    person("Guillermo", "de Anda-Jáuregui", , "gdeanda@inmegen.edu.mx", role = c("aut", "cre"))
 Description: Provides tools to parse KEGG pathway KGML files into tidy
     graphs, expand metanodes (e.g. multi-gene entries), annotate them with
     custom dictionaries, and produce consistent visualizations using
     ggraph. Enables integration of KEGG pathways with tidygraph-based
     workflows. A pretty useful network-from-KEGG exploration resource.
-License: MIT
+License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
