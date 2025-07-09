@@ -1,14 +1,14 @@
 #' Parse KEGG group nodes from a KGML file
 #'
 #' Extracts group-type entries from a KEGG KGML file and generates both:
-#' (1) a mapping of group ID to component node IDs, and
+#' (1) a mapping of group ID to component node IDs (with meta_id),
 #' (2) a set of intra-group edges linking the components as undirected pairs.
 #'
 #' @param kgml A parsed XML document from `xml2::read_xml()`, representing a KEGG KGML file.
 #'
 #' @return A list with two elements:
 #' \describe{
-#'   \item{mapping}{A tibble mapping each group ID to its member node IDs.}
+#'   \item{mapping}{A tibble mapping each member ID to its meta_id (group_id or itself).}
 #'   \item{edges}{A tibble with pairwise intra-group edges (from, to, type = "group").}
 #' }
 #' @export
@@ -21,14 +21,14 @@ parse_kegg_groups <- function(kgml) {
     member_ids <- xml2::xml_attr(components, "id")
 
     tibble::tibble(
-      group_id = group_id,
-      member_id = member_ids
+      member_id = member_ids,
+      meta_id   = group_id
     )
   })
 
   intra_group_edges <-
     group_components |>
-    dplyr::group_by(group_id) |>
+    dplyr::group_by(meta_id) |>
     dplyr::summarise(
       edges = list({
         ids <- member_id
@@ -81,17 +81,26 @@ parse_kegg_relations_clean <- function(kgml) {
 #' Combine KEGG group and relation edges into a tidygraph
 #'
 #' Parses both standard KEGG relations and intra-group edges, and builds a directed tidygraph.
+#' Also assigns meta_id to each node: either its group_id (if in a group) or its own ID.
 #'
 #' @param kgml A parsed XML document from `xml2::read_xml()`.
 #'
-#' @return A `tidygraph` object with all edges from the KGML.
+#' @return A `tidygraph` object with all edges from the KGML and nodes carrying `meta_id`.
 #' @export
 combine_kegg_network <- function(kgml) {
   edges_rel <- parse_kegg_relations_clean(kgml)
-  edges_grp <- parse_kegg_groups(kgml)$edges
+  group_parsed <- parse_kegg_groups(kgml)
+  edges_grp <- group_parsed$edges
+  mapping    <- group_parsed$mapping
 
   edges <- dplyr::bind_rows(edges_rel, edges_grp)
 
-  igraph::graph_from_data_frame(edges, directed = TRUE) |>
+  # Node table with meta_id
+  all_ids <- unique(c(edges$from, edges$to))
+  node_tbl <- tibble::tibble(id = all_ids) |>
+    dplyr::left_join(mapping, by = c("id" = "member_id")) |>
+    dplyr::mutate(meta_id = dplyr::coalesce(meta_id, id))
+
+  igraph::graph_from_data_frame(edges, vertices = node_tbl, directed = TRUE) |>
     tidygraph::as_tbl_graph()
 }
