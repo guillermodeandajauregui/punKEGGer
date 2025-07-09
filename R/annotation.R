@@ -11,7 +11,6 @@
 #' @return A tibble linking each `meta_id` to any identifiers in `kegg_dict`.
 #' @export
 create_meta_dict <- function(node_info, kegg_dict) {
-
   node_info_expanded <-
     node_info |>
     tidyr::separate_longer_delim(cols = kegg_id, delim = " ") |>
@@ -40,7 +39,6 @@ create_meta_dict <- function(node_info, kegg_dict) {
 #' @return The same tidygraph, with new columns added to the node attributes.
 #' @export
 annotate_kegg_graph <- function(graph, kegg_dict, identifiers = c("hgnc_symbol")) {
-
   dict_cols <- colnames(kegg_dict)
   valid_ids <- identifiers[identifiers %in% dict_cols]
   invalid_ids <- setdiff(identifiers, dict_cols)
@@ -61,8 +59,29 @@ Using: {toString(valid_ids)}
     "))
   }
 
-  node_dict <-
+  # Warn if same KEGG ID maps to multiple meta_id
+  multi_meta <-
     kegg_dict |>
+    dplyr::distinct(kegg_id, meta_id) |>
+    dplyr::group_by(kegg_id) |>
+    dplyr::filter(dplyr::n() > 1)
+
+  if (nrow(multi_meta) > 0) {
+    warning(glue::glue("
+[WARNING] Multiple meta_id values found for {nrow(multi_meta)} KEGG IDs.
+Only the first meta_id per KEGG ID will be used.
+You should probably go check your dictionary, punk.
+"))
+  }
+
+  collapsed_dict <-
+    kegg_dict |>
+    dplyr::group_by(kegg_id) |>
+    dplyr::slice(1) |>
+    dplyr::ungroup()
+
+  node_dict <-
+    collapsed_dict |>
     dplyr::filter(kegg_id %in% igraph::V(graph)$name) |>
     dplyr::select(name = kegg_id, meta_id, type, dplyr::all_of(valid_ids))
 
@@ -77,7 +96,6 @@ Using: {toString(valid_ids)}
 Only the first match per ID will be used.
 You should probably go check your dictionary, punk.
 "))
-
     node_dict <-
       node_dict |>
       dplyr::group_by(name) |>
@@ -87,5 +105,5 @@ You should probably go check your dictionary, punk.
 
   graph |>
     tidygraph::activate("nodes") |>
-    dplyr::full_join(node_dict, by = "name")
+    dplyr::left_join(node_dict, by = "name")
 }
