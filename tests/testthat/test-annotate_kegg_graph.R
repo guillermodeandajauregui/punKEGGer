@@ -8,7 +8,7 @@ test_that("annotate_kegg_graph adds valid identifiers with a clean dictionary", 
   dict_path <- testthat::test_path("test_dict.csv")
   kegg_dict <- readr::read_csv(dict_path, show_col_types = FALSE)
 
-  # 🔒 Assert that the dictionary has no duplicated KEGG IDs
+  #  Assert that the dictionary has no duplicated KEGG IDs
   duplicates <- kegg_dict |> dplyr::count(kegg_id) |> dplyr::filter(n > 1)
   expect_equal(
     nrow(duplicates), 0,
@@ -17,9 +17,13 @@ test_that("annotate_kegg_graph adds valid identifiers with a clean dictionary", 
 
   meta_dict <- create_meta_dict(node_info, kegg_dict)
 
-  g_annotated <- annotate_kegg_graph(
-    g_exp, meta_dict,
-    identifiers = c("hgnc_symbol", "entrez_id")
+  # 🧼 Expect the warning about multiple meta_id values
+  expect_warning(
+    g_annotated <- annotate_kegg_graph(
+      g_exp, meta_dict,
+      identifiers = c("hgnc_symbol", "entrez_id")
+    ),
+    regexp = "Multiple meta_id values found"
   )
 
   expect_s3_class(g_annotated, "tbl_graph")
