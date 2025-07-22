@@ -9,6 +9,22 @@
 #'
 #' @return A `ggplot` object with the KEGG network visualization.
 #' @export
+#'
+#' @examples
+#' kgml_file <- system.file("extdata", "hsa04210.xml", package = "punKEGGer")
+#' dict_file <- system.file("extdata", "example_dict.hsa04210.csv", package = "punKEGGer")
+#'
+#' doc <- xml2::read_xml(kgml_file)
+#' nodes <- extract_kegg_nodes(doc)
+#' rels <- parse_kegg_relations_clean(doc)
+#' g <- combine_kegg_network(doc)
+#' layout_tbl <- layout_kegg(doc)
+#' dict <- readr::read_csv(dict_file, show_col_types = FALSE)
+#'
+#' g_annot <- annotate_kegg_graph(g, dict)
+#' g_layout <- add_kegg_layout(g_annot, layout_tbl)
+#'
+#' ggkegg(g_layout, id = hgnc_symbol)
 ggkegg <- function(g, id = hgnc_symbol) {
   ggraph::ggraph(g, layout = "manual", x = x, y = y) +
 
