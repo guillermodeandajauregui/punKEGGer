@@ -90,18 +90,18 @@ You should probably go check your dictionary, punk.
     dplyr::count(name) |>
     dplyr::filter(n > 1)
 
-  if (nrow(multi_match) > 0) {
-    warning(glue::glue("
-[WARNING] Multiple matches found for {nrow(multi_match)} KEGG IDs when trying to annotate with {toString(valid_ids)}.
-Only the first match per ID will be used.
-You should probably go check your dictionary, punk.
-"))
-    node_dict <-
-      node_dict |>
-      dplyr::group_by(name) |>
-      dplyr::slice(1) |>
-      dplyr::ungroup()
-  }
+#   if (nrow(multi_match) > 0) {
+#     warning(glue::glue("
+# [WARNING] Multiple matches found for {nrow(multi_match)} KEGG IDs when trying to annotate with {toString(valid_ids)}.
+# Only the first match per ID will be used.
+# You should probably go check your dictionary, punk.
+# "))
+#     node_dict <-
+#       node_dict |>
+#       dplyr::group_by(name) |>
+#       dplyr::slice(1) |>
+#       dplyr::ungroup()
+#   }
 
   graph |>
     tidygraph::activate("nodes") |>
