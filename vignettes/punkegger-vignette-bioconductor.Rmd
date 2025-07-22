@@ -1,0 +1,89 @@
+---
+title: "punKEGGer: parsing and visualization of KEGG pathways for network science"
+author: "Guillermo de Anda Jáuregui"
+date: "2025-07-22"
+output:
+  BiocStyle::html_document:
+    toc: true
+    toc_depth: 2
+    number_sections: true
+vignette: >
+  %\VignetteIndexEntry{punKEGGer: parsing and visualization of KEGG pathways for network science}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+library(punKEGGer)
+```
+
+# Introduction
+
+`punKEGGer` was created to make KEGG pathway data accessible and useful for network science workflows.
+
+Traditional approaches to KEGG data within Bioconductor often reduce pathways to simple gene sets (e.g., for enrichment analysis), custom-saved `graphNEL` objects, or static visualizations with hardcoded layouts. While those are valid for many use cases, they often lose the rich topological and visual information encoded in KEGG's own pathway representations.
+
+`punKEGGer` provides a different approach: it parses the original `.kgml` files and converts them into clean, annotated `igraph` objects, with optional layouts and metadata preserved. From there, you can analyze topological features, integrate identifiers, combine multiple pathways, or run dynamic simulations — whatever your network science questions demand. It is, after all, a Pretty Useful Networks-from-KEGG Exploration Resource.
+
+# Example 1: Parse a single KEGG pathway
+
+```{r example-1}
+library(xml2)
+kgml <- read_xml("https://rest.kegg.jp/get/hsa04210/kgml")
+g <- combine_kegg_network(kgml)
+g
+```
+
+# Example 2: Add gene annotations
+
+```{r example-2}
+node_info <- extract_kegg_nodes(kgml)
+dict_path <- system.file("extdata", "example_dict.hsa04210.csv", package="punKEGGer")
+kegg_dict <- read.csv(dict_path)
+meta_dict <- create_meta_dict(node_info, kegg_dict)
+g_exp <- expand_metagraph(g, node_info, node_types = "gene")
+g_annot <- annotate_kegg_graph(g_exp, meta_dict, identifiers = "hgnc_symbol")
+```
+
+# Example 3: Visualize your pathway
+
+```{r example-3a}
+layout_tbl <- layout_kegg(kgml)
+g_layout <- add_kegg_layout(g_annot, layout_tbl)
+ggkegg(g_layout, id = hgnc_symbol)
+```
+
+Alternative layout using ggraph:
+
+```{r example-3b}
+library(ggraph)
+library(tidygraph)
+
+g_tbl <- as_tbl_graph(g_layout)
+ggraph(g_tbl, layout = "fr") +
+  geom_edge_link() +
+  geom_node_point(aes(color = type)) +
+  theme_void()
+```
+
+# Example 4: Combine pathways and do real network science
+
+```{r example-4}
+# For demonstration, we'll just duplicate the same pathway three times
+kgml1 <- read_xml("https://rest.kegg.jp/get/hsa04210/kgml")
+kgml2 <- read_xml("https://rest.kegg.jp/get/hsa04210/kgml")
+kgml3 <- read_xml("https://rest.kegg.jp/get/hsa04210/kgml")
+
+g1 <- combine_kegg_network(kgml1)
+g2 <- combine_kegg_network(kgml2)
+g3 <- combine_kegg_network(kgml3)
+
+g_combined <- igraph::union(g1, g2) |> igraph::union(g3)
+g_combined
+```
+
+This graph combines multiple copies of the same pathway. From here, you can compute centralities, detect communities, or simulate diffusion – whatever your punk network science needs demand.
