@@ -7,6 +7,12 @@
 #'
 #' @return A tibble with columns: `id`, `x`, `y` (corresponding to KEGG entry IDs).
 #' @export
+#'
+#' @examples
+#' kgml_file <- system.file("extdata", "hsa04210.xml", package = "punKEGGer")
+#' doc <- xml2::read_xml(kgml_file)
+#' layout_tbl <- layout_kegg(doc)
+#' head(layout_tbl)
 layout_kegg <- function(kgml) {
   node_entries <- xml2::xml_find_all(kgml, ".//entry")
 
@@ -34,6 +40,17 @@ layout_kegg <- function(kgml) {
 #'
 #' @return The same `tidygraph`, with `x` and `y` coordinates added to nodes.
 #' @export
+#'
+#' @examples
+#' kgml_file <- system.file("extdata", "hsa04210.xml", package = "punKEGGer")
+#' doc <- xml2::read_xml(kgml_file)
+#'
+#' g <- combine_kegg_network(doc)
+#' layout_tbl <- layout_kegg(doc)
+#' g_layout <- add_kegg_layout(g, layout_tbl)
+#'
+#' # View the layout coordinates
+#' head(tidygraph::as_tibble(g_layout))
 add_kegg_layout <- function(graph, layout_tbl) {
   graph |>
     tidygraph::activate("nodes") |>
