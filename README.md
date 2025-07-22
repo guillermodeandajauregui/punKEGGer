@@ -42,7 +42,7 @@ g_expanded <- expand_metagraph(g, node_info, node_types = c("gene", "compound"))
 
 # Step 5: Load example dictionary included with package
 dict_path <- system.file("extdata", "example_dict.hsa04210.csv", package = "punKEGGer")
-kegg_dict <- read_csv(dict_path, show_col_types = FALSE)
+kegg_dict <- read.csv(dict_path)
 
 # Step 6: Annotate graph with HGNC, Entrez, Ensembl
 meta_dict <- create_meta_dict(node_info, kegg_dict)
