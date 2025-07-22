@@ -19,6 +19,7 @@ Depends:
     R (>= 4.5.0)
 Imports: 
     dplyr,
+    readr,
     ggplot2,
     ggraph,
     glue,

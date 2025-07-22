@@ -13,6 +13,13 @@
 #' }
 #' @importFrom utils combn
 #' @export
+#'
+#' @examples
+#' kgml_file <- system.file("extdata", "hsa04210.xml", package = "punKEGGer")
+#' doc <- xml2::read_xml(kgml_file)
+#' group_data <- parse_kegg_groups(doc)
+#' head(group_data$mapping)
+#' head(group_data$edges)
 parse_kegg_groups <- function(kgml) {
   group_entries <- xml2::xml_find_all(kgml, "//entry[@type='group']")
 
@@ -59,6 +66,12 @@ parse_kegg_groups <- function(kgml) {
 #'
 #' @return A tibble with columns: `from`, `to`, `type`, `subtype`.
 #' @export
+#'
+#' @examples
+#' kgml_file <- system.file("extdata", "hsa04210.xml", package = "punKEGGer")
+#' doc <- xml2::read_xml(kgml_file)
+#' rels <- parse_kegg_relations_clean(doc)
+#' head(rels)
 parse_kegg_relations_clean <- function(kgml) {
   relations <- xml2::xml_find_all(kgml, "//relation")
 
@@ -88,6 +101,13 @@ parse_kegg_relations_clean <- function(kgml) {
 #'
 #' @return A `tidygraph` object with all edges from the KGML and nodes carrying `meta_id`.
 #' @export
+#'
+#' @examples
+#' kgml_file <- system.file("extdata", "hsa04210.xml", package = "punKEGGer")
+#' doc <- xml2::read_xml(kgml_file)
+#' g <- combine_kegg_network(doc)
+#' print(g)
+#' igraph::gorder(g)
 combine_kegg_network <- function(kgml) {
   edges_rel <- parse_kegg_relations_clean(kgml)
   group_parsed <- parse_kegg_groups(kgml)
