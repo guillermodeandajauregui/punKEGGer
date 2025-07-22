@@ -7,7 +7,7 @@
 expand_metagraph(g, node_info, node_types = c("gene"))
 }
 \arguments{
-\item{g}{A \code{tidygraph} object, typically from \code{combine_kegg_network()}.}
+\item{g}{A \code{tidygraph} object, typically created by \code{combine_kegg_network()}.}
 
 \item{node_info}{A tibble as returned by \code{extract_kegg_nodes()}.}
 
@@ -19,4 +19,19 @@ A new \code{tidygraph} object with expanded node IDs (e.g., \code{hsa:00001}, \c
 \description{
 Takes a tidygraph where node names are KGML entry IDs and expands the network
 by replacing group/multi-gene nodes with individual gene-level edges.
+}
+\examples{
+# Parse KGML and extract nodes and relations
+kgml_file <- system.file("extdata", "hsa04210.xml", package = "punKEGGer")
+doc <- xml2::read_xml(kgml_file)
+node_info <- extract_kegg_nodes(doc)
+rels <- parse_kegg_relations_clean(doc)
+g <- combine_kegg_network(doc)
+
+# Expand the graph from metanodes to gene-level nodes
+g_exp <- expand_metagraph(g, node_info)
+
+# Compare number of nodes before and after expansion
+igraph::gorder(g)      # number of metanodes
+igraph::gorder(g_exp)  # number of gene-level nodes
 }

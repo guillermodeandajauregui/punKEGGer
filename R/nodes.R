@@ -51,7 +51,7 @@ extract_kegg_nodes <- function(kgml) {
 #' doc <- xml2::read_xml(kgml_file)
 #' node_info <- extract_kegg_nodes(doc)
 #' rels <- parse_kegg_relations_clean(doc)
-#' g <- combine_kegg_network(node_info, rels)
+#' g <- combine_kegg_network(doc)
 #'
 #' # Expand the graph from metanodes to gene-level nodes
 #' g_exp <- expand_metagraph(g, node_info)

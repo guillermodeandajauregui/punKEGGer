@@ -33,7 +33,12 @@ Traditional approaches to KEGG data within Bioconductor often reduce pathways to
 
 ```{r example-1}
 library(xml2)
-kgml <- read_xml("https://rest.kegg.jp/get/hsa04210/kgml")
+#usually you'll read from the official database like so
+#kgml <- read_xml("https://rest.kegg.jp/get/hsa04210/kgml")
+#but for reproducibility purposes you can use 
+kgml_file <- system.file("extdata", "hsa04210.xml", package = "punKEGGer")
+kgml <- xml2::read_xml(kgml_file)
+
 g <- combine_kegg_network(kgml)
 g
 ```

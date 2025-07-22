@@ -17,3 +17,9 @@ Parses all \code{entry} elements from a KEGG KGML XML document and extracts ID, 
 type, and individual KEGG IDs. Supports multi-gene entries (e.g., \code{hsa:1234+hsa:5678})
 by expanding them into separate rows with a shared \code{meta_id}.
 }
+\examples{
+kgml_file <- system.file("extdata", "hsa04210.xml", package = "punKEGGer")
+doc <- xml2::read_xml(kgml_file)
+nodes <- extract_kegg_nodes(doc)
+head(nodes)
+}

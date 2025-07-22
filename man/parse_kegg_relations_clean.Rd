@@ -15,3 +15,9 @@ A tibble with columns: \code{from}, \code{to}, \code{type}, \code{subtype}.
 \description{
 Extracts pairwise relations between KEGG entries and their subtypes if available.
 }
+\examples{
+kgml_file <- system.file("extdata", "hsa04210.xml", package = "punKEGGer")
+doc <- xml2::read_xml(kgml_file)
+rels <- parse_kegg_relations_clean(doc)
+head(rels)
+}

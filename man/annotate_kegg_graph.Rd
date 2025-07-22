@@ -26,3 +26,15 @@ tibble with at least one column named \code{kegg_id}, containing KEGG gene IDs i
 the form \code{"hsa:1234"}. This dictionary can be generated from BioMart or other
 curated sources.
 }
+\examples{
+kgml_file <- system.file("extdata", "hsa04210.xml", package = "punKEGGer")
+dict_file <- system.file("extdata", "example_dict.hsa04210.csv", package = "punKEGGer")
+
+doc <- xml2::read_xml(kgml_file)
+dict <- read.csv(dict_file)
+nodes <- extract_kegg_nodes(doc)
+meta_dict <- create_meta_dict(nodes, dict)
+g <- combine_kegg_network(doc)
+g_annot <- annotate_kegg_graph(g, meta_dict)
+head(tidygraph::as_tibble(g_annot))
+}

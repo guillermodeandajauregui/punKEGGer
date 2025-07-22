@@ -16,3 +16,10 @@ A \code{tidygraph} object with all edges from the KGML and nodes carrying \code{
 Parses both standard KEGG relations and intra-group edges, and builds a directed tidygraph.
 Also assigns meta_id to each node: either its group_id (if in a group) or its own ID.
 }
+\examples{
+kgml_file <- system.file("extdata", "hsa04210.xml", package = "punKEGGer")
+doc <- xml2::read_xml(kgml_file)
+g <- combine_kegg_network(doc)
+print(g)
+igraph::gorder(g)
+}

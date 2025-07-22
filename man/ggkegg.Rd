@@ -19,3 +19,22 @@ Generates a \code{ggraph} plot of a KEGG network with manual layout (x, y),
 colored by node type and edge subtype. The user can specify which identifier
 to display on each node label (e.g., \code{hgnc_symbol}).
 }
+\examples{
+kgml_file <- system.file("extdata", "hsa04210.xml", package = "punKEGGer")
+dict_file <- system.file("extdata", "example_dict.hsa04210.csv", package = "punKEGGer")
+
+kgml <- xml2::read_xml(kgml_file)
+g <- combine_kegg_network(kgml)
+
+node_info <- extract_kegg_nodes(kgml)
+dict <- read.csv(dict_file)
+meta_dict <- create_meta_dict(node_info, dict)
+
+g_exp <- expand_metagraph(g, node_info, node_types = "gene")
+g_annot <- annotate_kegg_graph(g_exp, meta_dict, identifiers = "hgnc_symbol")
+
+layout_tbl <- layout_kegg(kgml)
+g_layout <- add_kegg_layout(g_annot, layout_tbl)
+
+ggkegg(g_layout, id = hgnc_symbol)
+}

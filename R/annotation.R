@@ -17,8 +17,7 @@
 #'
 #' doc <- xml2::read_xml(kgml_file)
 #' nodes <- extract_kegg_nodes(doc)
-#' dict <- readr::read_csv(dict_file, show_col_types = FALSE)
-#'
+#' dict <- read.csv(dict_file)
 #' meta_dict <- create_meta_dict(nodes, dict)
 #' head(meta_dict)
 create_meta_dict <- function(node_info, kegg_dict) {
@@ -55,9 +54,11 @@ create_meta_dict <- function(node_info, kegg_dict) {
 #' dict_file <- system.file("extdata", "example_dict.hsa04210.csv", package = "punKEGGer")
 #'
 #' doc <- xml2::read_xml(kgml_file)
-#' dict <- readr::read_csv(dict_file, show_col_types = FALSE)
+#' dict <- read.csv(dict_file)
+#' nodes <- extract_kegg_nodes(doc)
+#' meta_dict <- create_meta_dict(nodes, dict)
 #' g <- combine_kegg_network(doc)
-#' g_annot <- annotate_kegg_graph(g, dict)
+#' g_annot <- annotate_kegg_graph(g, meta_dict)
 #' head(tidygraph::as_tibble(g_annot))
 annotate_kegg_graph <- function(graph, kegg_dict, identifiers = c("hgnc_symbol")) {
   dict_cols <- colnames(kegg_dict)

@@ -16,3 +16,9 @@ A tibble with columns: \code{id}, \code{x}, \code{y} (corresponding to KEGG entr
 Parses the \code{graphics} element of each node in the KGML to extract manual layout
 positions (x, y), which are typically defined for KEGG maps.
 }
+\examples{
+kgml_file <- system.file("extdata", "hsa04210.xml", package = "punKEGGer")
+doc <- xml2::read_xml(kgml_file)
+layout_tbl <- layout_kegg(doc)
+head(layout_tbl)
+}

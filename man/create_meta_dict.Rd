@@ -20,3 +20,13 @@ Takes the output of \code{extract_kegg_nodes()} and a KEGG annotation dictionary
 (e.g., from BioMart or custom source), and merges them based on \code{kegg_id}.
 This enables annotating each metanode (\code{meta_id}) with HGNC, Ensembl, Entrez, etc.
 }
+\examples{
+kgml_file <- system.file("extdata", "hsa04210.xml", package = "punKEGGer")
+dict_file <- system.file("extdata", "example_dict.hsa04210.csv", package = "punKEGGer")
+
+doc <- xml2::read_xml(kgml_file)
+nodes <- extract_kegg_nodes(doc)
+dict <- read.csv(dict_file)
+meta_dict <- create_meta_dict(nodes, dict)
+head(meta_dict)
+}

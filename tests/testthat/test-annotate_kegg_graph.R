@@ -6,7 +6,7 @@ test_that("annotate_kegg_graph adds valid identifiers with a clean dictionary", 
   g_exp <- expand_metagraph(g_raw, node_info, node_types = c("gene"))
 
   dict_path <- testthat::test_path("test_dict.csv")
-  kegg_dict <- readr::read_csv(dict_path, show_col_types = FALSE)
+  kegg_dict <- read.csv(dict_path)
 
   duplicates <- kegg_dict |> dplyr::count(kegg_id) |> dplyr::filter(n > 1)
   expect_equal(

@@ -21,3 +21,10 @@ Extracts group-type entries from a KEGG KGML file and generates both:
 (1) a mapping of group ID to component node IDs (with meta_id),
 (2) a set of intra-group edges linking the components as undirected pairs.
 }
+\examples{
+kgml_file <- system.file("extdata", "hsa04210.xml", package = "punKEGGer")
+doc <- xml2::read_xml(kgml_file)
+group_data <- parse_kegg_groups(doc)
+head(group_data$mapping)
+head(group_data$edges)
+}

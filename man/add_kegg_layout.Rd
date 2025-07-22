@@ -18,3 +18,14 @@ The same \code{tidygraph}, with \code{x} and \code{y} coordinates added to nodes
 Joins a KEGG layout table (as returned by \code{layout_kegg()}) to a tidygraph object,
 using the \code{meta_id} field of each node as the key.
 }
+\examples{
+kgml_file <- system.file("extdata", "hsa04210.xml", package = "punKEGGer")
+doc <- xml2::read_xml(kgml_file)
+
+g <- combine_kegg_network(doc)
+layout_tbl <- layout_kegg(doc)
+g_layout <- add_kegg_layout(g, layout_tbl)
+
+# View the layout coordinates
+head(tidygraph::as_tibble(g_layout))
+}
