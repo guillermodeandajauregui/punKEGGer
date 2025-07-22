@@ -10,6 +10,17 @@
 #'
 #' @return A tibble linking each `meta_id` to any identifiers in `kegg_dict`.
 #' @export
+#'
+#' @examples
+#' kgml_file <- system.file("extdata", "hsa04210.xml", package = "punKEGGer")
+#' dict_file <- system.file("extdata", "example_dict.hsa04210.csv", package = "punKEGGer")
+#'
+#' doc <- xml2::read_xml(kgml_file)
+#' nodes <- extract_kegg_nodes(doc)
+#' dict <- readr::read_csv(dict_file, show_col_types = FALSE)
+#'
+#' meta_dict <- create_meta_dict(nodes, dict)
+#' head(meta_dict)
 create_meta_dict <- function(node_info, kegg_dict) {
   node_info_expanded <-
     node_info |>
@@ -38,6 +49,19 @@ create_meta_dict <- function(node_info, kegg_dict) {
 #'
 #' @return The same tidygraph, with new columns added to the node attributes.
 #' @export
+#'
+#' @examples
+#' kgml_file <- system.file("extdata", "hsa04210.xml", package = "punKEGGer")
+#' dict_file <- system.file("extdata", "example_dict.hsa04210.csv", package = "punKEGGer")
+#'
+#' doc <- xml2::read_xml(kgml_file)
+#' nodes <- extract_kegg_nodes(doc)
+#' rels <- parse_kegg_relations_clean(doc)
+#' g <- combine_kegg_network(nodes, rels)
+#'
+#' dict <- readr::read_csv(dict_file, show_col_types = FALSE)
+#' g_annot <- annotate_kegg_graph(g, dict, identifiers = c("hgnc_symbol", "ensembl_gene_id"))
+#' head(tidygraph::as_tibble(g_annot))
 annotate_kegg_graph <- function(graph, kegg_dict, identifiers = c("hgnc_symbol")) {
   dict_cols <- colnames(kegg_dict)
   valid_ids <- identifiers[identifiers %in% dict_cols]
@@ -59,7 +83,6 @@ Using: {toString(valid_ids)}
     "))
   }
 
-  # Warn if same KEGG ID maps to multiple meta_id
   multi_meta <-
     kegg_dict |>
     dplyr::distinct(kegg_id, meta_id) |>
@@ -89,19 +112,6 @@ You should probably go check your dictionary, punk.
     node_dict |>
     dplyr::count(name) |>
     dplyr::filter(n > 1)
-
-#   if (nrow(multi_match) > 0) {
-#     warning(glue::glue("
-# [WARNING] Multiple matches found for {nrow(multi_match)} KEGG IDs when trying to annotate with {toString(valid_ids)}.
-# Only the first match per ID will be used.
-# You should probably go check your dictionary, punk.
-# "))
-#     node_dict <-
-#       node_dict |>
-#       dplyr::group_by(name) |>
-#       dplyr::slice(1) |>
-#       dplyr::ungroup()
-#   }
 
   graph |>
     tidygraph::activate("nodes") |>
