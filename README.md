@@ -1,4 +1,6 @@
 
+<img src="man/figures/logo.png" width="200" align="right" />
+
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
 # punKEGGer
