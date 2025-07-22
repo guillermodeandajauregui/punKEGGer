@@ -10,8 +10,9 @@ combine_kegg_network(kgml)
 \item{kgml}{A parsed XML document from \code{xml2::read_xml()}.}
 }
 \value{
-A \code{tidygraph} object with all edges from the KGML.
+A \code{tidygraph} object with all edges from the KGML and nodes carrying \code{meta_id}.
 }
 \description{
 Parses both standard KEGG relations and intra-group edges, and builds a directed tidygraph.
+Also assigns meta_id to each node: either its group_id (if in a group) or its own ID.
 }

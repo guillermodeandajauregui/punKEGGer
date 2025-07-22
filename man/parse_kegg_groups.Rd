@@ -12,12 +12,12 @@ parse_kegg_groups(kgml)
 \value{
 A list with two elements:
 \describe{
-\item{mapping}{A tibble mapping each group ID to its member node IDs.}
+\item{mapping}{A tibble mapping each member ID to its meta_id (group_id or itself).}
 \item{edges}{A tibble with pairwise intra-group edges (from, to, type = "group").}
 }
 }
 \description{
 Extracts group-type entries from a KEGG KGML file and generates both:
-(1) a mapping of group ID to component node IDs, and
+(1) a mapping of group ID to component node IDs (with meta_id),
 (2) a set of intra-group edges linking the components as undirected pairs.
 }

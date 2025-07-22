@@ -11,6 +11,7 @@
 #'   \item{mapping}{A tibble mapping each member ID to its meta_id (group_id or itself).}
 #'   \item{edges}{A tibble with pairwise intra-group edges (from, to, type = "group").}
 #' }
+#' @importFrom utils combn
 #' @export
 parse_kegg_groups <- function(kgml) {
   group_entries <- xml2::xml_find_all(kgml, "//entry[@type='group']")

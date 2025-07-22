@@ -8,6 +8,12 @@
 #'
 #' @return A tibble with columns: `id`, `meta_id`, `type`, `kegg_id`
 #' @export
+#'
+#' @examples
+#' kgml_file <- system.file("extdata", "hsa04210.xml", package = "punKEGGer")
+#' doc <- xml2::read_xml(kgml_file)
+#' nodes <- extract_kegg_nodes(doc)
+#' head(nodes)
 extract_kegg_nodes <- function(kgml) {
   entries <- xml2::xml_find_all(kgml, "//entry")
 
@@ -31,12 +37,28 @@ extract_kegg_nodes <- function(kgml) {
 #' Takes a tidygraph where node names are KGML entry IDs and expands the network
 #' by replacing group/multi-gene nodes with individual gene-level edges.
 #'
-#' @param g A `tidygraph` object, typically from `combine_kegg_network()`.
+#' @param g A `tidygraph` object, typically created by `combine_kegg_network()`.
 #' @param node_info A tibble as returned by `extract_kegg_nodes()`.
 #' @param node_types Character vector indicating which node types to expand (default is `"gene"`).
 #'
 #' @return A new `tidygraph` object with expanded node IDs (e.g., `hsa:00001`, `hsa:00002`).
+#' @importFrom tidyselect everything
 #' @export
+#'
+#' @examples
+#' # Parse KGML and extract nodes and relations
+#' kgml_file <- system.file("extdata", "hsa04210.xml", package = "punKEGGer")
+#' doc <- xml2::read_xml(kgml_file)
+#' node_info <- extract_kegg_nodes(doc)
+#' rels <- parse_kegg_relations_clean(doc)
+#' g <- combine_kegg_network(node_info, rels)
+#'
+#' # Expand the graph from metanodes to gene-level nodes
+#' g_exp <- expand_metagraph(g, node_info)
+#'
+#' # Compare number of nodes before and after expansion
+#' igraph::gorder(g)      # number of metanodes
+#' igraph::gorder(g_exp)  # number of gene-level nodes
 expand_metagraph <- function(g, node_info, node_types = c("gene")) {
   edges <-
     tidygraph::as_tibble(g, active = "edges") |>

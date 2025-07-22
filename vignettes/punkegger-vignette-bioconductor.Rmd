@@ -87,3 +87,7 @@ g_combined
 ```
 
 This graph combines multiple copies of the same pathway. From here, you can compute centralities, detect communities, or simulate diffusion – whatever your punk network science needs demand.
+
+```{r session-info, echo=FALSE}
+sessionInfo()
+```

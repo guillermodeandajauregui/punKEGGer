@@ -4,3 +4,5 @@
 ^dev$
 ^README\.Rmd$
 ^README\.html$
+^doc$
+^Meta$
