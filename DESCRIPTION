@@ -1,6 +1,6 @@
 Package: punKEGGer
 Title: Parse, Expand and Visualize KEGG Pathway Networks
-Version: 0.99.0
+Version: 0.99.1
 Authors@R: 
     person("Guillermo", "de Anda Jáuregui", 
            email = "gdeanda@inmegen.edu.mx", 
