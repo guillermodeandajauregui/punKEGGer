@@ -42,5 +42,8 @@ biocViews:
     GraphAndNetwork,
     Network,
     Software,
-    Visualization
+    Visualization,
+    KEGG
 Config/testthat/edition: 3
+URL: https://github.com/guillermodeandajauregui/punKEGGer
+BugReports: https://github.com/guillermodeandajauregui/punKEGGer/issues
