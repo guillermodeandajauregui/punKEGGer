@@ -7,3 +7,9 @@
 dev/
 /doc/
 /Meta/
+.Rproj.user
+*.Rproj
+*.Rproj
+.Rproj.user/
+.Rhistory
+.RData
