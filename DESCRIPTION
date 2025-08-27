@@ -5,7 +5,7 @@ Authors@R: c(
     person("Guillermo", "de Anda Jáuregui",
            email = "gdeanda@inmegen.edu.mx",
            role = c("aut","cre"),
-           comment = c(ORCID = "0000-0000-0000-0000"))
+           comment = c(ORCID = "0000-0003-2551-3059"))
 )
 Description: Provides tools to parse KEGG pathway KGML files into tidy graphs,
     expand metanodes (e.g., multi-gene entries), annotate them with custom
