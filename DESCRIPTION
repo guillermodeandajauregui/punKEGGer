@@ -1,23 +1,23 @@
 Package: punKEGGer
-Title: Parse, Expand and Visualize KEGG Pathway Networks
-Version: 0.99.0
-Authors@R: 
-    person("Guillermo", "de Anda Jáuregui", 
-           email = "gdeanda@inmegen.edu.mx", 
-           role = c("aut", "cre"))
-Description: Provides tools to parse KEGG pathway KGML files into tidy
-    graphs, expand metanodes (e.g., multi-gene entries), annotate them with
-    custom dictionaries, and produce consistent visualizations using
-    ggraph. Enables integration of KEGG pathways with tidygraph-based
-    workflows.
+Title: Parse, Expand, Annotate and Visualize KEGG Pathway Networks
+Version: 0.99.1
+Authors@R: c(
+    person("Guillermo", "de Anda Jáuregui",
+           email = "gdeanda@inmegen.edu.mx",
+           role = c("aut","cre"),
+           comment = c(ORCID = "0000-0000-0000-0000"))
+)
+Description: Provides tools to parse KEGG pathway KGML files into tidy graphs,
+    expand metanodes (e.g., multi-gene entries), annotate them with custom
+    dictionaries, and produce consistent visualizations using ggraph.
+    Enables integration of KEGG pathways with tidygraph-based workflows.
 License: MIT + file LICENSE
 Encoding: UTF-8
-LazyData: true
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.2
-Depends: 
+Depends:
     R (>= 4.5.0)
-Imports: 
+Imports:
     dplyr,
     ggplot2,
     ggraph,
@@ -31,16 +31,19 @@ Imports:
     tidyselect,
     tidyr,
     xml2
-Suggests: 
+Suggests:
     testthat (>= 3.0.0),
     knitr,
     rmarkdown,
     BiocStyle
 VignetteBuilder: knitr
-biocViews: 
-    Pathways,
+biocViews:
+    Software,
+    Visualization,
     GraphAndNetwork,
     Network,
-    Software,
-    Visualization
+    Pathways,
+    KEGG
+URL: https://github.com/guillermodeandajauregui/punKEGGer
+BugReports: https://github.com/guillermodeandajauregui/punKEGGer/issues
 Config/testthat/edition: 3
