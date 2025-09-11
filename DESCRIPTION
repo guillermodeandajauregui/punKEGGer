@@ -1,6 +1,6 @@
 Package: punKEGGer
 Title: Parse, Expand, Annotate and Visualize KEGG Pathway Networks as Tidy Graphs
-Version: 0.99.6
+Version: 0.99.61
 Authors@R: 
     person(given = "Guillermo",
            family = "de Anda Jáuregui",
