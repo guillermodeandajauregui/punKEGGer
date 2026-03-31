@@ -59,7 +59,7 @@ g_annot <- annotate_kegg_graph(g_exp, meta_dict, identifiers = "hgnc_symbol")
 ```{r example-3a}
 layout_tbl <- layout_kegg(kgml)
 g_layout <- add_kegg_layout(g_annot, layout_tbl)
-ggkegg(g_layout, id = hgnc_symbol)
+plot_kegg_graph(g_layout, id = hgnc_symbol)
 ```
 
 Alternative layout using ggraph:

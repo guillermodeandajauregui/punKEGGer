@@ -64,7 +64,7 @@ g_annotated <- annotate_kegg_graph(g_expanded, meta_dict, identifiers = c("hgnc_
 
 # Step 7: Add layout and visualize
 g_annotated_layout <- add_kegg_layout(g_annotated, mi_layout)
-ggkegg(g_annotated_layout, id = hgnc_symbol)
+plot_kegg_graph(g_annotated_layout, id = hgnc_symbol)
 ```
 
 ## About the dictionary
