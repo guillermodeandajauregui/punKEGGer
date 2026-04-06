@@ -27,10 +27,13 @@ You can install the development version of punKEGGer from
 
 ``` r
 library(punKEGGer)
-library(xml2)
 
-# Step 1: Load KGML from KEGG API
-kgml <- read_xml("https://rest.kegg.jp/get/hsa04210/kgml")
+
+# Step 1: Fetch KGML from KEGG using KEGGREST
+kgml <- fetch_kegg_kgml("hsa04210")
+
+# (or use the KEGG API directly) 
+# kgml <- read_xml("https://rest.kegg.jp/get/hsa04210/kgml")
 
 # Step 2: Get KEGG layout
 mi_layout <- layout_kegg(kgml)
@@ -52,10 +55,10 @@ g_annotated <- annotate_kegg_graph(g_expanded, meta_dict, identifiers = c("hgnc_
 
 # Step 7: Add layout and visualize
 g_annotated_layout <- add_kegg_layout(g_annotated, mi_layout)
-ggkegg(g_annotated_layout, id = hgnc_symbol)
+plot_kegg_graph(g_annotated_layout, id = hgnc_symbol)
 ```
 
-<img src="man/figures/README-example-1.png" width="100%" />
+<img src="man/figures/README-example-1.png" alt="" width="100%" />
 
 ## About the dictionary
 

@@ -27,8 +27,8 @@
 #' layout_tbl <- layout_kegg(kgml)
 #' g_layout <- add_kegg_layout(g_annot, layout_tbl)
 #'
-#' ggkegg(g_layout, id = hgnc_symbol)
-ggkegg <- function(g, id = hgnc_symbol) {
+#' plot_kegg_graph(g_layout, id = hgnc_symbol)
+plot_kegg_graph <- function(g, id = hgnc_symbol) {
   ggraph::ggraph(g, layout = "manual", x = x, y = y) +
 
     # Edges

@@ -1,4 +1,4 @@
-test_that("ggkegg returns a ggplot object with expected layers", {
+test_that("plot_kegg_graph returns a ggplot object with expected layers", {
   library(tidygraph)
   library(ggraph)
   library(ggplot2)
@@ -22,7 +22,7 @@ test_that("ggkegg returns a ggplot object with expected layers", {
   g <- tbl_graph(nodes = nodes, edges = edges)
 
   # Plot
-  p <- ggkegg(g)
+  p <- plot_kegg_graph(g)
 
   # Check that it's a ggplot with layers
   expect_s3_class(p, "ggplot")
