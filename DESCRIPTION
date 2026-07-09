@@ -29,14 +29,16 @@ Imports:
     tidygraph,
     tidyselect,
     tidyr,
-    xml2
+    KEGGREST,
+    xml2,
+    BiocStyle
+    
 Suggests: 
     testthat (>= 3.0.0),
     knitr,
     rmarkdown,
-    KEGGREST,
     XML,
-    BiocStyle
+    
 VignetteBuilder: knitr
 biocViews: 
     Pathways,
