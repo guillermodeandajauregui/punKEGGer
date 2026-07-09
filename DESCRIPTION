@@ -1,6 +1,6 @@
 Package: punKEGGer
 Title: Parse, Expand, Annotate and Visualize KEGG Pathway Networks as Tidy Graphs
-Version: 0.99.64
+Version: 0.99.65
 Authors@R: 
     person(given = "Guillermo",
            family = "de Anda Jáuregui",
@@ -15,7 +15,7 @@ Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.3
 Depends: 
-    R (>= 4.5.0)
+    R (>= 4.6.0)
 Imports: 
     dplyr,
     ggplot2,
