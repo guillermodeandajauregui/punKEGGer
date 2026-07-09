@@ -117,7 +117,7 @@ You should probably go check your dictionary, punk.
   #     warning(glue::glue("
   # [WARNING] Multiple matches found for {nrow(multi_match)} KEGG IDs when trying to annotate with {toString(valid_ids)}.
   # Only the first match per ID will be used.
-  # You should probably go check your dictionary, punk.
+  # You should probably go check your dictionary.
   # "))
   #     node_dict |>
   #       dplyr::group_by(name) |>
