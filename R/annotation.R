@@ -81,18 +81,20 @@ Using: {toString(valid_ids)}
     "))
   }
 
-  # Warn if same KEGG ID maps to multiple meta_id
-  multi_meta <-
+  # Warn if multiple annotations found to same KEGG_ID
+  ambiguous_ids <-
     kegg_dict |>
-    dplyr::distinct(kegg_id, meta_id) |>
+    dplyr::select(kegg_id, dplyr::all_of(valid_ids)) |>
+    dplyr::distinct() |>
     dplyr::group_by(kegg_id) |>
-    dplyr::filter(dplyr::n() > 1)
+    dplyr::filter(dplyr::n() > 1) |>
+    dplyr::ungroup()
 
-  if (nrow(multi_meta) > 0) {
+  if (nrow(ambiguous_ids) > 0) {
     warning(glue::glue("
-[WARNING] Multiple meta_id values found for {nrow(multi_meta)} KEGG IDs.
-Only the first meta_id per KEGG ID will be used.
-You should probably go check your dictionary, punk.
+[WARNING] Multiple annotation values found for {dplyr::n_distinct(ambiguous_ids$kegg_id)} KEGG IDs.
+Only the first annotation per KEGG ID will be used.
+Please check your annotation dictionary.
 "))
   }
 

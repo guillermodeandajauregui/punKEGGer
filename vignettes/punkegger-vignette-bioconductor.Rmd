@@ -47,7 +47,7 @@ g
 
 ```{r example-2}
 node_info <- extract_kegg_nodes(kgml)
-dict_path <- system.file("extdata", "example_dict.hsa04210_singlematch.csv", package="punKEGGer")
+dict_path <- system.file("extdata", "example_dict.hsa04210.csv", package="punKEGGer")
 kegg_dict <- read.csv(dict_path)
 meta_dict <- create_meta_dict(node_info, kegg_dict)
 g_exp <- expand_metagraph(g, node_info, node_types = "gene")

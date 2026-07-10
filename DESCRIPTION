@@ -13,7 +13,6 @@ Description: Provides tools to parse KEGG pathway KGML files into tidy
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.3.3
 Depends: 
     R (>= 4.6.0)
 Imports: 
@@ -32,13 +31,11 @@ Imports:
     KEGGREST,
     xml2,
     BiocStyle
-    
 Suggests: 
     testthat (>= 3.0.0),
     knitr,
     rmarkdown,
     XML
-    
 VignetteBuilder: knitr
 biocViews: 
     Pathways,
@@ -49,3 +46,4 @@ biocViews:
 URL: https://github.com/guillermodeandajauregui/punKEGGer
 BugReports: https://github.com/guillermodeandajauregui/punKEGGer/issues
 Config/testthat/edition: 3
+Config/roxygen2/version: 8.0.0
