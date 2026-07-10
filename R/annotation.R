@@ -106,14 +106,13 @@ Please check your annotation dictionary.
   }
 
   collapsed_dict <-
-    kegg_dict |>
+    relevant_dict |>
     dplyr::group_by(kegg_id) |>
     dplyr::slice(1) |>
     dplyr::ungroup()
 
   node_dict <-
     collapsed_dict |>
-    dplyr::filter(kegg_id %in% igraph::V(graph)$name) |>
     dplyr::select(name = kegg_id, meta_id, type, dplyr::all_of(valid_ids))
 
   multi_match <-
