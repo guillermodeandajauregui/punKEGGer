@@ -91,7 +91,7 @@ g_combined <- igraph::union(g1, g2) |> igraph::union(g3)
 g_combined
 ```
 
-This graph combines multiple copies of the same pathway. From here, you can compute centralities, detect communities, or simulate diffusion – whatever your punk network science needs demand.
+This graph combines multiple copies of the same pathway. From here, you can compute centralities, detect communities, or simulate diffusion – whatever your network science needs demand.
 
 ```{r session-info, echo=FALSE}
 sessionInfo()
