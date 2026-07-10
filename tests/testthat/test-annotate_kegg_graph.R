@@ -16,12 +16,11 @@ test_that("annotate_kegg_graph adds valid identifiers with a clean dictionary", 
 
   meta_dict <- create_meta_dict(node_info, kegg_dict)
 
-  expect_warning(
+  expect_no_warning(
     g_annotated <- annotate_kegg_graph(
       g_exp, meta_dict,
       identifiers = c("hgnc_symbol", "entrez_id")
-    ),
-    regexp = "Multiple meta_id values found"
+    )
   )
 
   expect_s3_class(g_annotated, "tbl_graph")
