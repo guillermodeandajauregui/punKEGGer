@@ -45,7 +45,7 @@ test_that("annotate_kegg_graph accepts repeated graph node names without warning
   expect_equal(tib$hgnc_symbol, c("GENE_X", "GENE_X"))
 })
 
-test_that("annotate_kegg_graph handles repeated meta_id with different KEGG IDs (no warning expected)", {
+test_that("annotate_kegg_graph ignores dictionary rows whose KEGG ID is absent from graph", {
   dummy_nodes <- tibble::tibble(
     name = "dummy:k00040",
     meta_id = "MID20",
@@ -60,11 +60,15 @@ test_that("annotate_kegg_graph handles repeated meta_id with different KEGG IDs 
     hgnc_symbol = c("GENE_A", "GENE_B")
   )
 
-  g_annot <- annotate_kegg_graph(g, meta_dict, identifiers = "hgnc_symbol")
+  expect_no_warning(
+    g_annot <- annotate_kegg_graph(g, meta_dict, identifiers = "hgnc_symbol")
+  )
+
   tib <- tidygraph::as_tibble(g_annot)
 
   expect_true("hgnc_symbol" %in% names(tib))
-  expect_equal(nrow(tib), 2)
+  expect_equal(nrow(tib), 1)
+  expect_equal(tib$hgnc_symbol[1], "GENE_A")
 })
 
 test_that("annotate_kegg_graph joins generate duplicated rows per node when meta_dict has redundant matches", {
