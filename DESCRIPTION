@@ -41,6 +41,7 @@ biocViews:
     Pathways,
     GraphAndNetwork,
     Software,
+    Network,
     Visualization,
     KEGG
 URL: https://github.com/guillermodeandajauregui/punKEGGer
