@@ -4,7 +4,17 @@ test_that("annotate_kegg_graph warns on identifiers not in dictionary", {
     meta_id = "MID10",
     x = 1, y = 1
   )
-  g <- tidygraph::as_tbl_graph(dummy_nodes)
+
+  g <-
+    igraph::make_empty_graph(n = nrow(dummy_nodes), directed = TRUE) |>
+    tidygraph::as_tbl_graph() |>
+    tidygraph::activate("nodes") |>
+    dplyr::mutate(
+      name = dummy_nodes$name,
+      meta_id = dummy_nodes$meta_id,
+      x = dummy_nodes$x,
+      y = dummy_nodes$y
+    )
 
   meta_dict <- tibble::tibble(
     kegg_id = "dummy:k00020",
@@ -25,8 +35,17 @@ test_that("annotate_kegg_graph accepts repeated graph node names without warning
     meta_id = c("MID11", "MID11"),
     x = 1, y = 2
   )
-  g <- tidygraph::as_tbl_graph(dummy_nodes)
 
+  g <-
+    igraph::make_empty_graph(n = nrow(dummy_nodes), directed = TRUE) |>
+    tidygraph::as_tbl_graph() |>
+    tidygraph::activate("nodes") |>
+    dplyr::mutate(
+      name = dummy_nodes$name,
+      meta_id = dummy_nodes$meta_id,
+      x = dummy_nodes$x,
+      y = dummy_nodes$y
+    )
   meta_dict <- tibble::tibble(
     kegg_id = c("dummy:k00030", "dummy:k00030"),
     meta_id = c("MID11", "MID11"),
@@ -51,7 +70,17 @@ test_that("annotate_kegg_graph ignores dictionary rows whose KEGG ID is absent f
     meta_id = "MID20",
     x = 1, y = 1
   )
-  g <- tidygraph::as_tbl_graph(dummy_nodes)
+
+  g <-
+    igraph::make_empty_graph(n = nrow(dummy_nodes), directed = TRUE) |>
+    tidygraph::as_tbl_graph() |>
+    tidygraph::activate("nodes") |>
+    dplyr::mutate(
+      name = dummy_nodes$name,
+      meta_id = dummy_nodes$meta_id,
+      x = dummy_nodes$x,
+      y = dummy_nodes$y
+    )
 
   meta_dict <- tibble::tibble(
     kegg_id = c("dummy:k00040", "dummy:k00041"),
@@ -77,7 +106,17 @@ test_that("annotate_kegg_graph warns and collapses conflicting annotations per K
     meta_id = c("MID30", "MID31"),
     x = 1, y = 1
   )
-  g <- tidygraph::as_tbl_graph(dummy_nodes)
+
+  g <-
+    igraph::make_empty_graph(n = nrow(dummy_nodes), directed = TRUE) |>
+    tidygraph::as_tbl_graph() |>
+    tidygraph::activate("nodes") |>
+    dplyr::mutate(
+      name = dummy_nodes$name,
+      meta_id = dummy_nodes$meta_id,
+      x = dummy_nodes$x,
+      y = dummy_nodes$y
+    )
 
   meta_dict <- tibble::tibble(
     kegg_id = c("dummy:k00050", "dummy:k00050", "dummy:k00051", "dummy:k00051"),
@@ -104,7 +143,17 @@ test_that("annotate_kegg_graph does not keep dictionary matches absent from grap
     meta_id = "MID40",
     x = 1, y = 1
   )
-  g <- tidygraph::as_tbl_graph(dummy_nodes)
+
+  g <-
+    igraph::make_empty_graph(n = nrow(dummy_nodes), directed = TRUE) |>
+    tidygraph::as_tbl_graph() |>
+    tidygraph::activate("nodes") |>
+    dplyr::mutate(
+      name = dummy_nodes$name,
+      meta_id = dummy_nodes$meta_id,
+      x = dummy_nodes$x,
+      y = dummy_nodes$y
+    )
 
   meta_dict <- tibble::tibble(
     kegg_id = c("dummy:k00060", "dummy:k00060b"),
