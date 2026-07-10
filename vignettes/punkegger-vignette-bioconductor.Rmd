@@ -1,7 +1,7 @@
 ---
 title: "punKEGGer: parsing and visualization of KEGG pathways for network science"
 author: "Guillermo de Anda Jáuregui"
-date: "2025-07-22"
+date: "2026-07-10"
 output:
   BiocStyle::html_document:
     toc: true
@@ -31,11 +31,14 @@ Traditional approaches to KEGG data within Bioconductor often reduce pathways to
 
 # Example 1: Parse a single KEGG pathway
 
+This first example shows the basic parsing workflow. We start from a KGML file, which is KEGG’s XML representation of a pathway, and convert it into a tidygraph/igraph object. The resulting graph preserves pathway relations and can be used directly with standard network analysis tools.
+
 ```{r example-1}
-library(xml2)
-#usually you'll read from the official database like so
-#kgml <- read_xml("https://rest.kegg.jp/get/hsa04210/kgml")
-#but for reproducibility purposes you can use 
+# usually you'll read from the official database like so
+# kgml <- read_xml("https://rest.kegg.jp/get/hsa04210/kgml")
+# or use the function fetch_kegg_kgml
+# kgml <- fetch_kegg_kgml("hsa04210")
+# but for reproducibility purposes you can use 
 kgml_file <- system.file("extdata", "hsa04210.xml", package = "punKEGGer")
 kgml <- xml2::read_xml(kgml_file)
 
@@ -43,18 +46,36 @@ g <- combine_kegg_network(kgml)
 g
 ```
 
+The printed object summarizes the parsed pathway as an tidygraph object. At this stage, nodes still are annotated using KEGG entry identifiers; annotation is added in the next step.
+
 # Example 2: Add gene annotations
+
+KEGG entries often group several molecules (genes, etc) identifiers into a single pathway node. For molecule-level analyses, punKEGGer can expand these metanodes and then attach external identifiers, such as HGNC symbols, using a user-provided dictionary; such dictionaries can be obtained from resources such as BioMart.
 
 ```{r example-2}
 node_info <- extract_kegg_nodes(kgml)
-dict_path <- system.file("extdata", "example_dict.hsa04210.csv", package="punKEGGer")
+dict_path <- system.file("extdata", "example_dict.hsa04210.csv", package = "punKEGGer")
 kegg_dict <- read.csv(dict_path)
+# creates the dictionary for the metanodes
 meta_dict <- create_meta_dict(node_info, kegg_dict)
+# expands metanodes and returns a new graph
 g_exp <- expand_metagraph(g, node_info, node_types = "gene")
+#annotates expanded graph 
 g_annot <- annotate_kegg_graph(g_exp, meta_dict, identifiers = "hgnc_symbol")
+
+#show the expanded graph with annotated nodes
+tidygraph::as_tibble(g_annot, active = "nodes") |>
+  dplyr::select(name, meta_id, type, hgnc_symbol) |>
+  head()
 ```
 
+Here, we expanded metanodes into single nodes. Then, we add identifier columns to the node table. These columns can then be used for plotting, filtering, or downstream analyses.
+
+
+
 # Example 3: Visualize your pathway
+
+KEGG pathways include manually curated coordinates that reproduce the familiar KEGG pathway layout. layout_kegg() extracts those coordinates, and plot_kegg_graph() uses them to create a KEGG-like network plot.
 
 ```{r example-3a}
 layout_tbl <- layout_kegg(kgml)
@@ -62,36 +83,69 @@ g_layout <- add_kegg_layout(g_annot, layout_tbl)
 plot_kegg_graph(g_layout, id = hgnc_symbol)
 ```
 
-Alternative layout using ggraph:
+## Alternative layout using ggraph:
+
+In some analyses, the curated KEGG layout is less important than the graph topology itself. Since the output is a standard graph object, it can also be visualized with any other ggraph-compatible layouts. 
 
 ```{r example-3b}
 library(ggraph)
 library(tidygraph)
 
-g_tbl <- as_tbl_graph(g_layout)
-ggraph(g_tbl, layout = "fr") +
+# let's calculate some simple centrality measures
+g_annot <- 
+  g_annot |> 
+  mutate(degree = centrality_degree())
+
+# now we visualize the network using a force-directed layout, and show node size and label size proportional to degree
+
+ggraph(g_annot, layout = "fr") +
   geom_edge_link() +
-  geom_node_point(aes(color = type)) +
+  geom_node_label(aes(size = degree, 
+                     label = hgnc_symbol),
+                  fill = "#9D4EDD",
+                  color = "white",
+                  label.r = unit(0.15,"lines"),
+                  label.padding = unit(0.25,"lines"),
+                  label.size = 0.2,
+                  repel = TRUE
+                 ) + 
   theme_void()
 ```
 
-# Example 4: Combine pathways and do real network science
+# Example 4: Combine pathways and connect to your network science pipeline
 
 ```{r example-4}
-# For demonstration, we'll just duplicate the same pathway three times
-kgml1 <- read_xml("https://rest.kegg.jp/get/hsa04210/kgml")
-kgml2 <- read_xml("https://rest.kegg.jp/get/hsa04210/kgml")
-kgml3 <- read_xml("https://rest.kegg.jp/get/hsa04210/kgml")
 
-g1 <- combine_kegg_network(kgml1)
-g2 <- combine_kegg_network(kgml2)
-g3 <- combine_kegg_network(kgml3)
 
-g_combined <- igraph::union(g1, g2) |> igraph::union(g3)
-g_combined
+#let's identify modules in the network using the Infomap algorithm
+
+g_annot <- 
+  as_tbl_graph(g_annot)
+
+g_annot <- 
+  g_annot |> 
+  mutate(infomap = group_infomap())
+
+
+
+#let's calculate degree centrality 
+g_annot <- 
+  g_annot |> 
+  mutate(degree = centrality_degree())
+
+# now, let's identify the gene(s) with highest centrality per module 
+
+df <- 
+  g_annot |> 
+  as_tibble() |> 
+  group_by(infomap) |> 
+  filter(degree == max(degree)) |> 
+  arrange(infomap)
+
+print(df)
 ```
 
-This graph combines multiple copies of the same pathway. From here, you can compute centralities, detect communities, or simulate diffusion – whatever your network science needs demand.
+In this example, we take our previous KEGG graph, find modules using a community detection method, and identify the most connected gene in each module. This is just an example; From here, you can compute centralities, detect communities, or simulate diffusion – whatever your network science needs demand.
 
 ```{r session-info, echo=FALSE}
 sessionInfo()
