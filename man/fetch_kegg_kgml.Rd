@@ -18,7 +18,7 @@ and returns it as an \code{xml2} document ready for downstream parsing with
 \code{punKEGGer}.
 }
 \examples{
-\dontrun{
+\donttest{
 kgml <- fetch_kegg_kgml("hsa04210")
 g <- combine_kegg_network(kgml)
 }
