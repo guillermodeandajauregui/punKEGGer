@@ -71,7 +71,7 @@ test_that("annotate_kegg_graph ignores dictionary rows whose KEGG ID is absent f
   expect_equal(tib$hgnc_symbol[1], "GENE_A")
 })
 
-test_that("annotate_kegg_graph joins generate duplicated rows per node when meta_dict has redundant matches", {
+test_that("annotate_kegg_graph warns and collapses conflicting annotations per KEGG ID", {
   dummy_nodes <- tibble::tibble(
     name = c("dummy:k00050", "dummy:k00051"),
     meta_id = c("MID30", "MID31"),
@@ -86,14 +86,19 @@ test_that("annotate_kegg_graph joins generate duplicated rows per node when meta
     hgnc_symbol = c("GENE_A1", "GENE_A2", "GENE_B1", "GENE_B2")
   )
 
-  g_annot <- annotate_kegg_graph(g, meta_dict, identifiers = "hgnc_symbol")
+  expect_warning(
+    g_annot <- annotate_kegg_graph(g, meta_dict, identifiers = "hgnc_symbol"),
+    regexp = "Multiple annotation values found"
+  )
+
   tib <- tidygraph::as_tibble(g_annot)
 
   expect_true("hgnc_symbol" %in% names(tib))
-  expect_equal(nrow(tib), 4)
+  expect_equal(nrow(tib), 2)
+  expect_equal(tib$hgnc_symbol, c("GENE_A1", "GENE_B1"))
 })
 
-test_that("annotate_kegg_graph allows multiple matches for single node and keeps all", {
+test_that("annotate_kegg_graph does not keep dictionary matches absent from graph", {
   dummy_nodes <- tibble::tibble(
     name = "dummy:k00060",
     meta_id = "MID40",
@@ -108,9 +113,13 @@ test_that("annotate_kegg_graph allows multiple matches for single node and keeps
     hgnc_symbol = c("GENE_X1", "GENE_X2")
   )
 
-  g_annot <- annotate_kegg_graph(g, meta_dict, identifiers = "hgnc_symbol")
+  expect_no_warning(
+    g_annot <- annotate_kegg_graph(g, meta_dict, identifiers = "hgnc_symbol")
+  )
+
   tib <- tidygraph::as_tibble(g_annot)
 
   expect_true("hgnc_symbol" %in% names(tib))
-  expect_equal(nrow(tib), 2)
+  expect_equal(nrow(tib), 1)
+  expect_equal(tib$hgnc_symbol[1], "GENE_X1")
 })
