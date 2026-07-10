@@ -67,7 +67,7 @@ annotate_kegg_graph <- function(graph, kegg_dict, identifiers = c("hgnc_symbol")
 
   if (length(valid_ids) == 0) {
     rlang::abort(glue::glue("
-[ERROR] None of the requested identifiers were found in your dictionary.
+None of the requested identifiers were found in your dictionary.
 Requested: {toString(identifiers)}
 Available columns: {toString(dict_cols)}
     "))
@@ -75,7 +75,7 @@ Available columns: {toString(dict_cols)}
 
   if (length(invalid_ids) > 0) {
     warning(glue::glue("
-[WARNING] Some requested identifiers are not present in the dictionary and will be ignored.
+Some requested identifiers are not present in the dictionary and will be ignored.
 Missing: {toString(invalid_ids)}
 Using: {toString(valid_ids)}
     "))
@@ -99,7 +99,7 @@ Using: {toString(valid_ids)}
 
   if (nrow(ambiguous_ids) > 0) {
     warning(glue::glue("
-[WARNING] Multiple annotation values found for {dplyr::n_distinct(ambiguous_ids$kegg_id)} KEGG IDs.
+Multiple annotation values found for {dplyr::n_distinct(ambiguous_ids$kegg_id)} KEGG IDs.
 Only the first annotation per KEGG ID will be used.
 Please check your annotation dictionary.
 "))
