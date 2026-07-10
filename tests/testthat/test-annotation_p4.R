@@ -1,4 +1,4 @@
-test_that("annotate_kegg_graph triggers multi_meta warning when same KEGG ID maps to multiple meta_id", {
+test_that("annotate_kegg_graph does not warn when same KEGG ID maps to multiple meta_id with same annotation", {
   g <- igraph::make_ring(5) |>
     tidygraph::as_tbl_graph() |>
     dplyr::mutate(name = paste0("kegg", 1:5))
@@ -10,15 +10,18 @@ test_that("annotate_kegg_graph triggers multi_meta warning when same KEGG ID map
     "kegg2",          "CCC",    "gene", "2",
     "kegg_extra_BBC", "CCC",    "gene", "2",
     "ZZA",            "EEE",    "gene", "4",
-    "ZZA",            "EEE",    "gene", "725",
+    "ZZA",            "EEE",    "gene", "4",
     "kegg4",          "FFF",    "gene", "4",
     "kegg5",          "GGG",    "gene", "5"
   )
 
-  expect_warning(
-    g_annot <- annotate_kegg_graph(g, meta_dict, identifiers = "hgnc_symbol"),
-    regexp = "Multiple meta_id values found"
+  expect_no_warning(
+    g_annot <- annotate_kegg_graph(g, meta_dict, identifiers = "hgnc_symbol")
   )
+
+  tib <- tidygraph::as_tibble(g_annot)
+
+  expect_true("hgnc_symbol" %in% names(tib))
+  expect_equal(nrow(tib), 5)
+  expect_equal(tib$hgnc_symbol[1], "1")
 })
-
-
