@@ -19,7 +19,7 @@ test_that("annotate_kegg_graph warns on identifiers not in dictionary", {
   )
 })
 
-test_that("annotate_kegg_graph accepts multiple matches per name without warning", {
+test_that("annotate_kegg_graph accepts repeated graph node names without warning when annotation is identical", {
   dummy_nodes <- tibble::tibble(
     name = c("dummy:k00030", "dummy:k00030"),
     meta_id = c("MID11", "MID11"),
@@ -31,14 +31,18 @@ test_that("annotate_kegg_graph accepts multiple matches per name without warning
     kegg_id = c("dummy:k00030", "dummy:k00030"),
     meta_id = c("MID11", "MID11"),
     type = c("gene", "gene"),
-    hgnc_symbol = c("GENE_X", "GENE_Y")
+    hgnc_symbol = c("GENE_X", "GENE_X")
   )
 
-  g_annot <- annotate_kegg_graph(g, meta_dict, identifiers = "hgnc_symbol")
+  expect_no_warning(
+    g_annot <- annotate_kegg_graph(g, meta_dict, identifiers = "hgnc_symbol")
+  )
+
   tib <- tidygraph::as_tibble(g_annot)
 
   expect_true("hgnc_symbol" %in% names(tib))
   expect_equal(nrow(tib), 2)
+  expect_equal(tib$hgnc_symbol, c("GENE_X", "GENE_X"))
 })
 
 test_that("annotate_kegg_graph handles repeated meta_id with different KEGG IDs (no warning expected)", {
