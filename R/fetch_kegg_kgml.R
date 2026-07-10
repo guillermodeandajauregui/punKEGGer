@@ -10,7 +10,7 @@
 #' @export
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' kgml <- fetch_kegg_kgml("hsa04210")
 #' g <- combine_kegg_network(kgml)
 #' }
