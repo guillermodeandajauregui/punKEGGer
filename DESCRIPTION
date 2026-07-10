@@ -29,12 +29,12 @@ Imports:
     tidyselect,
     tidyr,
     KEGGREST,
-    xml2,
-    BiocStyle
+    xml2
 Suggests: 
     testthat (>= 3.0.0),
     knitr,
     rmarkdown,
+    BiocStyle,
     XML
 VignetteBuilder: knitr
 biocViews: 
