@@ -82,13 +82,20 @@ Using: {toString(valid_ids)}
   }
 
   # Warn if multiple annotations found to same KEGG_ID
-  ambiguous_ids <-
+  graph_names <- igraph::V(graph)$name
+
+  relevant_dict <-
     kegg_dict |>
+    dplyr::filter(kegg_id %in% graph_names)
+
+  ambiguous_ids <-
+    relevant_dict |>
     dplyr::select(kegg_id, dplyr::all_of(valid_ids)) |>
     dplyr::distinct() |>
     dplyr::group_by(kegg_id) |>
     dplyr::filter(dplyr::n() > 1) |>
     dplyr::ungroup()
+
 
   if (nrow(ambiguous_ids) > 0) {
     warning(glue::glue("
