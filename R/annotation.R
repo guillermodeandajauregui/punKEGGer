@@ -115,23 +115,7 @@ Please check your annotation dictionary.
     collapsed_dict |>
     dplyr::select(name = kegg_id, meta_id, type, dplyr::all_of(valid_ids))
 
-  multi_match <-
-    node_dict |>
-    dplyr::count(name) |>
-    dplyr::filter(n > 1)
-  # this section commented because seems unneeded with current flow
-  # but could be useful to ensure data shape
-  #   if (nrow(multi_match) > 0) {
-  #     warning(glue::glue("
-  # [WARNING] Multiple matches found for {nrow(multi_match)} KEGG IDs when trying to annotate with {toString(valid_ids)}.
-  # Only the first match per ID will be used.
-  # You should probably go check your dictionary.
-  # "))
-  #     node_dict |>
-  #       dplyr::group_by(name) |>
-  #       dplyr::slice(1) |>
-  #       dplyr::ungroup()
-  #   }
+
 
   graph |>
     tidygraph::activate("nodes") |>
