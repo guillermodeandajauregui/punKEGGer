@@ -23,7 +23,7 @@
 create_meta_dict <- function(node_info, kegg_dict) {
   node_info_expanded <-
     node_info |>
-    tidyr::separate_longer_delim(cols = kegg_id, delim = " ") |>
+    split_kegg_ids() |>
     dplyr::select(-id)  # keep only meta_id and kegg_id
 
   meta_dict <-

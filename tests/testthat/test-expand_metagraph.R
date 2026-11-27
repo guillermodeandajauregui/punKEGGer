@@ -9,9 +9,10 @@ test_that("expand_metagraph returns graph with expanded KEGG IDs", {
   # Graph is tidygraph
   expect_s3_class(g_exp, "tbl_graph")
 
-  # All node names should look like hsa:#### or similar
+  # Both requested node types keep their KEGG namespaces.
   node_names <- igraph::V(g_exp)$name
-  expect_true(all(stringr::str_detect(node_names, "^hsa:\\d+$")))
+  expect_true(all(stringr::str_detect(node_names, "^(hsa:\\d+|cpd:C\\d+)$")))
+  expect_true(any(startsWith(node_names, "cpd:")))
 
   # No NA node names
   expect_false(any(is.na(node_names)))

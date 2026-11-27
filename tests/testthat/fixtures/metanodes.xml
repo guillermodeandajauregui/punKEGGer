@@ -1,0 +1,16 @@
+<pathway>
+  <entry id="40" name="hsa:1  hsa:2" type="gene">
+    <graphics x="10" y="20"/>
+  </entry>
+  <entry id="10" name="hsa:3+hsa:4" type="gene">
+    <graphics x="30" y="40"/>
+  </entry>
+  <entry id="90" name="path:hsa04910" type="map">
+    <graphics x="50" y="60"/>
+  </entry>
+  <relation entry1="40" entry2="10" type="PPrel">
+    <subtype name="activation" value="--&gt;"/>
+  </relation>
+  <relation entry1="10" entry2="40" type="PPrel"/>
+  <relation entry1="10" entry2="90" type="maplink"/>
+</pathway>

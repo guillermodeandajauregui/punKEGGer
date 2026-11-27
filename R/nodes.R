@@ -1,8 +1,15 @@
+split_kegg_ids <- function(nodes) {
+  nodes |>
+    dplyr::mutate(kegg_id = stringr::str_trim(kegg_id)) |>
+    tidyr::separate_longer_delim(kegg_id, delim = stringr::regex("[+\\s]+"))
+}
+
 #' Extract KEGG node information from a KGML file
 #'
 #' Parses all `entry` elements from a KEGG KGML XML document and extracts ID, name,
 #' type, and individual KEGG IDs. Supports multi-gene entries (e.g., `hsa:1234+hsa:5678`)
-#' by expanding them into separate rows with a shared `meta_id`.
+#' separated by whitespace or `+` by expanding them into separate rows with a
+#' shared `meta_id`.
 #'
 #' @param kgml A parsed XML document from `xml2::read_xml()`.
 #'
@@ -19,16 +26,11 @@ extract_kegg_nodes <- function(kgml) {
 
   tibble::tibble(
     id   = xml2::xml_attr(entries, "id"),
-    name = xml2::xml_attr(entries, "name"),
+    kegg_id = xml2::xml_attr(entries, "name"),
     type = xml2::xml_attr(entries, "type")
   ) |>
     dplyr::mutate(meta_id = id) |>
-    dplyr::mutate(kegg_ids = stringr::str_split(name, "\\+")) |>
-    tidyr::unnest(kegg_ids) |>
-    dplyr::mutate(
-      kegg_id = stringr::str_trim(kegg_ids),
-      id = as.character(id)
-    ) |>
+    split_kegg_ids() |>
     dplyr::select(id, meta_id, type, kegg_id)
 }
 
@@ -60,29 +62,25 @@ extract_kegg_nodes <- function(kgml) {
 #' igraph::gorder(g)      # number of metanodes
 #' igraph::gorder(g_exp)  # number of gene-level nodes
 expand_metagraph <- function(g, node_info, node_types = c("gene")) {
+  entry_ids <- igraph::V(g)$name
   edges <-
     tidygraph::as_tibble(g, active = "edges") |>
-    dplyr::mutate(from = as.character(from), to = as.character(to))
+    dplyr::mutate(from = entry_ids[from], to = entry_ids[to])
 
-  edge_debug_from <-
-    edges |>
-    dplyr::left_join(
-      node_info |> dplyr::select(id, kegg_id, type) |> dplyr::rename(kegg_id_from = kegg_id, type_from = type),
-      by = c("from" = "id")
-    )
+  members <- node_info |>
+    split_kegg_ids() |>
+    dplyr::filter(type %in% node_types, !is.na(kegg_id), kegg_id != "") |>
+    dplyr::select(id, kegg_id, type)
 
-  edge_debug_full <-
-    edge_debug_from |>
-    dplyr::left_join(
-      node_info |> dplyr::select(id, kegg_id, type) |> dplyr::rename(kegg_id_to = kegg_id, type_to = type),
-      by = c("to" = "id")
-    )
-
-  edge_debug_full |>
-    tidyr::drop_na() |>
-    dplyr::filter(type_from %in% node_types, type_to %in% node_types) |>
-    tidyr::separate_longer_delim(kegg_id_from, delim = " ") |>
-    tidyr::separate_longer_delim(kegg_id_to, delim = " ") |>
+  edges |>
+    dplyr::inner_join(
+      dplyr::rename(members, kegg_id_from = kegg_id, type_from = type),
+      by = c("from" = "id"), relationship = "many-to-many"
+    ) |>
+    dplyr::inner_join(
+      dplyr::rename(members, kegg_id_to = kegg_id, type_to = type),
+      by = c("to" = "id"), relationship = "many-to-many"
+    ) |>
     dplyr::rename(
       from_legacy = from,
       to_legacy   = to,
