@@ -23,7 +23,7 @@
 parse_kegg_groups <- function(kgml) {
   group_entries <- xml2::xml_find_all(kgml, "//entry[@type='group']")
 
-  group_components <- purrr::map_dfr(group_entries, function(entry) {
+  group_components <- purrr::map(group_entries, function(entry) {
     group_id <- xml2::xml_attr(entry, "id")
     components <- xml2::xml_find_all(entry, ".//component")
     member_ids <- xml2::xml_attr(components, "id")
@@ -32,7 +32,10 @@ parse_kegg_groups <- function(kgml) {
       member_id = member_ids,
       meta_id   = group_id
     )
-  })
+  }) |>
+    purrr::list_rbind(ptype = tibble::tibble(
+      member_id = character(), meta_id = character()
+    ))
 
   intra_group_edges <-
     group_components |>
@@ -75,13 +78,13 @@ parse_kegg_groups <- function(kgml) {
 parse_kegg_relations_clean <- function(kgml) {
   relations <- xml2::xml_find_all(kgml, "//relation")
 
-  purrr::map_dfr(relations, function(rel) {
+  purrr::map(relations, function(rel) {
     entry1 <- xml2::xml_attr(rel, "entry1")
     entry2 <- xml2::xml_attr(rel, "entry2")
     type   <- xml2::xml_attr(rel, "type")
 
     subtype_node <- xml2::xml_find_first(rel, ".//subtype")
-    subtype <- if (!is.na(subtype_node)) xml2::xml_attr(subtype_node, "name") else NA
+    subtype <- xml2::xml_attr(subtype_node, "name")
 
     tibble::tibble(
       from = entry1,
@@ -89,7 +92,10 @@ parse_kegg_relations_clean <- function(kgml) {
       type = type,
       subtype = subtype
     )
-  })
+  }) |>
+    purrr::list_rbind(ptype = tibble::tibble(
+      from = character(), to = character(), type = character(), subtype = character()
+    ))
 }
 
 #' Combine KEGG group and relation edges into a tidygraph

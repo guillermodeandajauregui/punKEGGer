@@ -15,7 +15,8 @@ A tibble with columns: \code{id}, \code{meta_id}, \code{type}, \code{kegg_id}
 \description{
 Parses all \code{entry} elements from a KEGG KGML XML document and extracts ID, name,
 type, and individual KEGG IDs. Supports multi-gene entries (e.g., \code{hsa:1234+hsa:5678})
-by expanding them into separate rows with a shared \code{meta_id}.
+separated by whitespace or \code{+} by expanding them into separate rows with a
+shared \code{meta_id}.
 }
 \examples{
 kgml_file <- system.file("extdata", "hsa04210.xml", package = "punKEGGer")
